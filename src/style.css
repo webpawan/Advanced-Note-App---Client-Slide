@@ -1,0 +1,94 @@
+* {
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  overflow-x: hidden;
+}
+
+.content {
+  /* background-color: red; */
+  height: calc(100vh - 45px);
+}
+
+textarea {
+  height: 10rem !important;
+}
+
+@media screen and (max-width: 900px) {
+  .input {
+    width: 90% !important;
+  }
+
+  .mycolors button {
+    padding: 10px 10px !important;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .input {
+    width: 95% !important;
+  }
+}
+
+.main {
+  height: 100vh;
+  position: relative;
+}
+
+.copyright {
+  font-size: 0.5rem;
+}
+
+#red {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 4, 4, 0.792),
+    rgba(255, 4, 4, 0.271)
+  ) !important;
+  transition: all 0.2s;
+  border: none !important;
+}
+
+#blue {
+  background: linear-gradient(180deg, #00affe, #00aefe53) !important;
+  border: none !important;
+  transition: all 0.2s;
+}
+#red-blue {
+  background: linear-gradient(
+    18deg,
+    #004768 10%,
+    rgba(72, 0, 0, 0.816) 90%
+  ) !important;
+  border: none !important;
+  transition: all 0.2s;
+}
+
+.element-size {
+  padding: 15px 15px;
+}
+#light {
+  color: white !important;
+}
+
+.deleteIcon{
+padding:  5px !important;
+
+}
+
+.tagline {
+  /* padding: 0 !important; */
+  border: none !important;
+  opacity: none !important;
+  font-size: 1rem !important;
+  background-color: transparent !important;
+}
+.tagicon {
+  background-color: rgba(0, 255, 255, 0.741);
+  z-index: 100;
+}
+
+input,
+textarea {
+  border: 1px solid black !important;
+}
