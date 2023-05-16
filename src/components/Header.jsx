@@ -1,9 +1,20 @@
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-import logo from "../svg/logo.svg";
-
+import { getUser } from "../features/userSlice";
+import { useDispatch } from "react-redux";
 const Header = () => {
+  const [user, setUser] = useState("");
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    setUser(userInfo);
+    const { email, ...Info } = userInfo;
+    // dispatch(setUser());
+    if (!userInfo) {
+      navigate("/");
+    }
+  }, []);
   return (
     <>
       <motion.header
@@ -15,7 +26,7 @@ const Header = () => {
         <nav className="navbar navbar-expand-lg bg-light">
           <div className="container-fluid">
             <a className="navbar-brand img-fluid" href="/">
-              {/* <img src={logo} style={{ height: "40px" }} alt="bhai" /> */}
+              <div className="box">{user?.email}</div>
             </a>
             <button
               className="navbar-toggler"

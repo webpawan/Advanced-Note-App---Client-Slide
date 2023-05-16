@@ -1,30 +1,39 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../features/userSlice";
 const UserAuth = () => {
   const navigate = useNavigate();
   const [auth, setAuth] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  console.log(loading);
   const signup = async (e) => {
     e.preventDefault();
     if (!email || !name || !password) {
       return alert("please fill all the fileds");
     }
+    setLoading(true);
     try {
       const { data } = await axios.post("/api/user/signup", {
         name,
         email,
         password,
       });
-      const { password, ...userInfo } = data;
-
-console.log(userInfo);
-      console.log(data);
-      navigate("/home");
+      if (data) {
+        const { password, ...userInfo } = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setLoading(false);
+        navigate("/home");
+      }
     } catch (error) {
       console.log(error);
+      setLoading(false);
+
       alert("signup problem");
     }
     setName("");
@@ -36,22 +45,27 @@ console.log(userInfo);
     if (!email || !password) {
       return alert("please fill all the fileds");
     }
+    setLoading(true);
+
     try {
       const { data } = await axios.post("/api/user/signin", {
         email,
         password,
       });
-      //  const { password, ...userInfo } = data;
-
-      //  console.log(userInfo);
-      navigate("/home");
-
+      if (data) {
+        const { password, ...userInfo } = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setLoading(false);
+        navigate("/home");
+      }
     } catch (error) {
+      setLoading(false);
+      console.log(error);
       alert(error.response.data.message);
     }
-    setName("");
-    setEmail("");
-    setPassword("");
+    // setName("");
+    // setEmail("");
+    // setPassword("");
   };
   if (auth) {
     return (

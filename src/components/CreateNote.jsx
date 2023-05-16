@@ -1,15 +1,43 @@
 import { motion } from "framer-motion";
 import Note from "./Note";
-
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { getUser } from "../features/userSlice";
 const CreateNote = () => {
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [color, setColor] = useState("");
+  const [tag, setTag] = useState("");
+  const [submitBtn, setSubmitBtn] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+
+  
+
+  const createNote = async () => {
+    // setSubmitBtn(!submitBtn);
+    setLoading(true);
+    try {
+      if (!title || !body) {
+        return alert("please write title and body");
+      }
+      const { data } = await axios.post(`/api/note/`, { title, body });
+      console.log(data);
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
 
 
   return (
     <>
       <section className="input mx-auto w-75 mt-5">
-        <form action="" 
-        // onSubmit={setdata}
-        >
+        <form action="">
           <motion.div
             className="input-group mb-3"
             initial={{ x: "10vw", opacity: 0 }}
@@ -18,13 +46,12 @@ const CreateNote = () => {
               delay: 0.5,
             }}
           >
-            
             <input
               type="text"
               className="form-control"
               required
-            //   onChange={inputhandler}
-            //   value={input.title}
+              onChange={(e) => setTitle(e.target.value)}
+              value={title}
               name="title"
               placeholder="Title"
             />
@@ -39,8 +66,8 @@ const CreateNote = () => {
           >
             <textarea
               className="form-control m-50"
-            //   onChange={inputhandler}
-            //   value={input.desc}
+              onChange={(e) => setBody(e.target.value)}
+              value={body}
               name="desc"
               placeholder="write your note"
             ></textarea>
@@ -59,21 +86,19 @@ const CreateNote = () => {
           <div className=" col-2 mx-auto text-center col-md-2 col-lg-2 ">
             <button
               type="submit"
-            //   onClick={setdata}
+              onClick={createNote}
               className="btn btn-outline-primary plus-btn "
             >
-              {/* {!isediting ? (
-                <i className="fa-solid fa-plus"></i>
-              ) : (
+              {!submitBtn ? (
                 <i className="fa-solid fa-pen-to-square"></i>
-              )} */}
+              ) : (
+                <i className="fa-solid fa-plus"></i>
+              )}
             </button>
           </div>
 
           <div className=" col-10 col-md-10 col-lg-10 d-flex align-items-center text-center justify-content-center mx-atuo  flex-wrap">
-            <div className="d-flex mycolors  p-2"
-            //  onClick={pickcolor}
-             >
+            <div className="d-flex mycolors  p-2">
               <button className="btn btn-outline-primar ">
                 select colors
                 <i className="fa-sharp fa-solid fa-paintbrush"></i>
@@ -135,8 +160,9 @@ const CreateNote = () => {
                 Tag<i className="fa-sharp fa-solid fa-tag "></i>
               </span>
 
-              <div className="" 
-            //   onClick={pickTag}
+              <div
+                className=""
+                //   onClick={pickTag}
               >
                 <motion.i
                   data-bs-toggle="tooltip"
@@ -222,7 +248,7 @@ const CreateNote = () => {
             noteEdit={noteEdit}
           />
         )} */}
-        <Note/>
+        <Note refresh={loading}/>
       </motion.div>
     </>
   );

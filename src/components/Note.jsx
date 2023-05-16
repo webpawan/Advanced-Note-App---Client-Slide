@@ -1,154 +1,96 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import axios from "axios";
+const Note = ({ refresh }) => {
+  const [notes, setNotes] = useState();
 
-const Note = () => {
-  return (
-    <div className="container my-5">
-      <div className="row">
-        {/* {data.map((item) => { */}
-        {/* //   const { id, title, desc, color, tag } = item; */}
+  const deletenote = async (id) => {
 
-          {/* return ( */}
-            <motion.div
-              className="col-lg-4 col-md-3  col-sm-6 my-4"
-            //   key={id}
-              initial={{ y: -100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-            >
-              <div
-                className="card shadow py-1 bg-light  text-light bg-dark "
-                // id={color}
+    try {
+      const deleteNote = await axios.delete(`/api/note/delete/${id}`);
+      console.log(deleteNote);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const noteEdit = async (noteId) => {
+    try {
+      const {data} = await axios.get(`/api/note/selectNote/${noteId}`, );
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchNote = async () => {
+      const { data } = await axios.get("/api/note/");
+      setNotes(data);
+    };
+    fetchNote();
+  }, [refresh, deletenote]);
+
+  if (notes) {
+    return (
+      <div className="container my-5">
+        <div className="row">
+          {notes?.map((data) => {
+            return (
+              <motion.div
+                className="col-lg-4 col-md-3  col-sm-6 my-4"
+                key={data._id}
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
               >
-                <div className="card-body ">
-                  <h5 className="card-title py-1">title</h5>
-                  <p className="card-text">detail</p>
+                <div
+                  className="card shadow py-1 bg-light  text-light bg-dark "
+                  // id={color}
+                >
+                  <div className="card-body ">
+                    <h5 className="card-title py-1">{data.title}</h5>
+                    <p className="card-text">{data.body}</p>
 
-                  <div className="d-flex  align-items-center justify-content-between">
-                    <div className="d-flex">
-                      <button
-                        className="card-link btn btn-outline-danger deleteIcon d-flex "
-                        // onClick={() => deletenote(id)}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                        <lord-icon
-                          src="https://cdn.lordicon.com/kfzfxczd.json"
-                          trigger="hover"
-                          colors="primary:#e4e4e4"
-                          style={{ height: "25px", width: "25px" }}
-                        ></lord-icon>
-                      </button>
+                    <div className="d-flex  align-items-center justify-content-between">
+                      <div className="d-flex">
+                        <button
+                          className="card-link btn btn-outline-danger deleteIcon d-flex "
+                          onClick={() => deletenote(data._id)}
+                        >
+                          <lord-icon
+                            src="https://cdn.lordicon.com/kfzfxczd.json"
+                            trigger="hover"
+                            colors="primary:#e4e4e4"
+                            style={{ height: "25px", width: "25px" }}
+                          ></lord-icon>
+                        </button>
 
-                      <button
-                        className="card-link btn btn-outline-primary btn-delete d-flex deleteIcon"
-                        // onClick={() => noteEdit(id)}
-                      >
-                        <lord-icon
-                          src="https://cdn.lordicon.com/vufjamqa.json"
-                          trigger="hover"
-                          colors="primary:#e4e4e4"
-                          style={{ height: "25px", width: "25px" }}
-                        ></lord-icon>
-                      </button>
+                        <button
+                          className="card-link btn btn-outline-primary btn-delete d-flex deleteIcon"
+                          onClick={() => noteEdit(data._id)}
+                        >
+                          <lord-icon
+                            src="https://cdn.lordicon.com/vufjamqa.json"
+                            trigger="hover"
+                            colors="primary:#e4e4e4"
+                            style={{ height: "25px", width: "25px" }}
+                          ></lord-icon>
+                        </button>
+                      </div>
+                      <span className=" mt-1">
+                        {/* <i className={tag}></i> */}
+                        tag
+                      </span>
                     </div>
-                    <span className=" mt-1">
-                      {/* <i className={tag}></i> */}
-                      tag
-                    </span>
                   </div>
                 </div>
-              </div>
-
-             
-
-              {/* <div
-                className="card shadow py-1 bg-light  text-light bg-dark "
-                id={color}
-              >
-                <div className="card-body ">
-                  <h5 className="card-title py-1">{title}</h5>
-                  <p className="card-text">{desc}</p>
-
-                  <div className="d-flex  align-items-center justify-content-between">
-                    <div className="d-flex">
-                      <button
-                        className="card-link btn btn-outline-danger deleteIcon d-flex "
-                        onClick={() => deletenote(id)}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                        <lord-icon
-                          src="https://cdn.lordicon.com/kfzfxczd.json"
-                          trigger="hover"
-                          colors="primary:#e4e4e4"
-                          style={{ height: "25px", width: "25px" }}
-                        ></lord-icon>
-                      </button>
-
-                      <button
-                        className="card-link btn btn-outline-primary btn-delete d-flex deleteIcon"
-                        onClick={() => noteEdit(id)}
-                      >
-                        <lord-icon
-                          src="https://cdn.lordicon.com/vufjamqa.json"
-                          trigger="hover"
-                          colors="primary:#e4e4e4"
-                          style={{ height: "25px", width: "25px" }}
-                        ></lord-icon>
-                      </button>
-                    </div>
-                    <span className=" mt-1">
-                      <i className={tag}></i>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="card shadow py-1 bg-light  text-light bg-dark "
-                id={color}
-              >
-                <div className="card-body ">
-                  <h5 className="card-title py-1">{title}</h5>
-                  <p className="card-text">{desc}</p>
-
-                  <div className="d-flex  align-items-center justify-content-between">
-                    <div className="d-flex">
-                      <button
-                        className="card-link btn btn-outline-danger deleteIcon d-flex "
-                        onClick={() => deletenote(id)}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                        <lord-icon
-                          src="https://cdn.lordicon.com/kfzfxczd.json"
-                          trigger="hover"
-                          colors="primary:#e4e4e4"
-                          style={{ height: "25px", width: "25px" }}
-                        ></lord-icon>
-                      </button>
-
-                      <button
-                        className="card-link btn btn-outline-primary btn-delete d-flex deleteIcon"
-                        onClick={() => noteEdit(id)}
-                      >
-                        <lord-icon
-                          src="https://cdn.lordicon.com/vufjamqa.json"
-                          trigger="hover"
-                          colors="primary:#e4e4e4"
-                          style={{ height: "25px", width: "25px" }}
-                        ></lord-icon>
-                      </button>
-                    </div>
-                    <span className=" mt-1">
-                      <i className={tag}></i>
-                    </span>
-                  </div>
-                </div>
-              </div> */}
-            </motion.div>
-          {/* ); */}
-      
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default Note;
