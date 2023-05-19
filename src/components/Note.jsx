@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { getSelectNote, setSelectNote } from "../features/noteSlice";
 const Note = ({ refresh }) => {
   const [notes, setNotes] = useState();
-
+  const dispatch = useDispatch();
   const deletenote = async (id) => {
-
     try {
       const deleteNote = await axios.delete(`/api/note/delete/${id}`);
-      console.log(deleteNote);
     } catch (error) {
       console.log(error);
     }
@@ -16,8 +16,8 @@ const Note = ({ refresh }) => {
 
   const noteEdit = async (noteId) => {
     try {
-      const {data} = await axios.get(`/api/note/selectNote/${noteId}`, );
-      console.log(data);
+      const { data } = await axios.get(`/api/note/selectNote/${noteId}`);
+      dispatch(setSelectNote(data))
     } catch (error) {
       console.log(error);
     }
@@ -45,7 +45,7 @@ const Note = ({ refresh }) => {
               >
                 <div
                   className="card shadow py-1 bg-light  text-light bg-dark "
-                  // id={color}
+                  id={data.color}
                 >
                   <div className="card-body ">
                     <h5 className="card-title py-1">{data.title}</h5>
@@ -78,8 +78,7 @@ const Note = ({ refresh }) => {
                         </button>
                       </div>
                       <span className=" mt-1">
-                        {/* <i className={tag}></i> */}
-                        tag
+                        <i className={data.tag}></i>
                       </span>
                     </div>
                   </div>

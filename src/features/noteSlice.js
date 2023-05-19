@@ -1,19 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  deleteNote: {},
+  selectNote: {},
 };
 
 const noteSlice = createSlice({
   name: "noteSlice",
   initialState,
   reducers: {
-    setDelete: (state, action) => {
-      state.deleteNote = action.payload;
+    setSelectNote: (state, action) => {
+      state.selectNote = action.payload;
+      
     },
   },
 });
 
 export default noteSlice.reducer;
-export const { setDelete } = noteSlice.actions;
-export const getDeleteId = (state) => state.note.deleteNote;
+export const { setSelectNote } = noteSlice.actions;
+export const getSelectNote = (state) => state.note.selectNote;

@@ -2,38 +2,70 @@ import { motion } from "framer-motion";
 import Note from "./Note";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import { getUser } from "../features/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getSelectNote, setSelectNote } from "../features/noteSlice";
 const CreateNote = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [color, setColor] = useState("");
   const [tag, setTag] = useState("");
-  const [submitBtn, setSubmitBtn] = useState(true);
+  const [selectBtn, setSelectBtn] = useState(true);
   const [loading, setLoading] = useState(false);
-
-
-  
+  const dispatch = useDispatch();
+  const selectNote = useSelector(getSelectNote);
 
   const createNote = async () => {
-    // setSubmitBtn(!submitBtn);
     setLoading(true);
     try {
       if (!title || !body) {
+        setColor("");
+        setTag("");
         return alert("please write title and body");
       }
-      const { data } = await axios.post(`/api/note/`, { title, body });
-      console.log(data);
+      const { data } = await axios.post(`/api/note/`, {
+        title,
+        body,
+        color,
+        tag,
+      });
+
+      dispatch(setSelectNote(data));
 
       setLoading(false);
     } catch (error) {
+     return setLoading(false);
+    }
+    setColor("");
+    setTag("");
+  };
+  const updateNote = async () => {
+    try {
+      const noteId = selectNote._id;
+      const noteUpdate = await axios.put("/api/note/update/", {
+        title,
+        body,
+        tag,
+        color,
+        noteId,
+      });
+      setSelectBtn(true);
+      
+    } catch (error) {
       console.log(error);
-      setLoading(false);
+      alert("server error");
     }
   };
-
-
-
+  useEffect(() => {
+    console.log(selectNote.title);
+    if (selectNote.title) {
+      setSelectBtn(false);
+      setTitle(selectNote.title);
+      setBody(selectNote.body);
+      setColor(selectNote.color);
+      setTag(selectNote.tag);
+      console.log("hy");
+    }
+  }, [selectNote.title!==undefined]);
   return (
     <>
       <section className="input mx-auto w-75 mt-5">
@@ -84,22 +116,24 @@ const CreateNote = () => {
           }}
         >
           <div className=" col-2 mx-auto text-center col-md-2 col-lg-2 ">
-            <button
-              type="submit"
-              onClick={createNote}
-              className="btn btn-outline-primary plus-btn "
-            >
-              {!submitBtn ? (
-                <i className="fa-solid fa-pen-to-square"></i>
+            <button type="submit" className="btn btn-outline plus-btn ">
+              {!selectBtn ? (
+                <i
+                  className="fa-solid fa-pen-to-square fa-2x"
+                  onClick={updateNote}
+                ></i>
               ) : (
-                <i className="fa-solid fa-plus"></i>
+                <i className="fa-solid fa-plus fa-2x" onClick={createNote}></i>
               )}
             </button>
           </div>
 
           <div className=" col-10 col-md-10 col-lg-10 d-flex align-items-center text-center justify-content-center mx-atuo  flex-wrap">
-            <div className="d-flex mycolors  p-2">
-              <button className="btn btn-outline-primar ">
+            <div
+              className="d-flex mycolors  p-2"
+              onClick={(e) => setColor(e.target.id)}
+            >
+              <button className="btn btn-secondary ">
                 select colors
                 <i className="fa-sharp fa-solid fa-paintbrush"></i>
               </button>
@@ -160,10 +194,7 @@ const CreateNote = () => {
                 Tag<i className="fa-sharp fa-solid fa-tag "></i>
               </span>
 
-              <div
-                className=""
-                //   onClick={pickTag}
-              >
+              <div className="" onClick={(e) => setTag(e.target.className)}>
                 <motion.i
                   data-bs-toggle="tooltip"
                   data-bs-placement="bottom"
@@ -241,14 +272,7 @@ const CreateNote = () => {
           stiffness: 100,
         }}
       >
-        {/* {list.length > 0 && (
-          <Note
-            data={search(list)}
-            deletenote={deletenote}
-            noteEdit={noteEdit}
-          />
-        )} */}
-        <Note refresh={loading}/>
+        <Note refresh={loading} />
       </motion.div>
     </>
   );

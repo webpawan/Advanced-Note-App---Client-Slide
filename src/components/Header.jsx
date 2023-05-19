@@ -50,6 +50,7 @@ const Header = () => {
                 />
               </div>
             </div>
+            <button className="btn btn-outline-danger">logout</button>
           </div>
         </nav>
       </motion.header>
