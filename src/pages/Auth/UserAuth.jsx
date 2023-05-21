@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUser } from "../../features/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 const UserAuth = () => {
   const navigate = useNavigate();
@@ -10,7 +8,6 @@ const UserAuth = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const signup = async (e) => {
     e.preventDefault();
     if (!email || !name || !password) {
@@ -23,7 +20,6 @@ const UserAuth = () => {
         theme: "dark",
       });
     }
-    setLoading(true);
     try {
       const { data } = await toast.promise(
         axios.post("/api/user/signup", {
@@ -33,21 +29,18 @@ const UserAuth = () => {
         }),
         {
           pending: " please wait ",
-          success: "your note updated",
+          success: "user successfully signup",
           error: "something is wrong try again or refresh the page ",
         }
       );
       if (data) {
         const { password, ...userInfo } = data;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setLoading(false);
         navigate("/home");
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
 
-      alert("signup problem");
     }
     setName("");
     setEmail("");
@@ -65,29 +58,57 @@ const UserAuth = () => {
         theme: "dark",
       });
     }
-    setLoading(true);
 
     try {
-      const { data } = await axios.post("/api/user/signin", {
+      const { data } = await toast.promise(axios.post("/api/user/signin", {
         email,
         password,
-      });
+      }),  {
+        pending: " please wait ",
+        success: "user successfully signin",
+        error: "try again",
+      })
       if (data) {
         const { password, ...userInfo } = data;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setLoading(false);
-        alert("please wait");
         navigate("/home");
       }
     } catch (error) {
-      setLoading(false);
 
       alert(error.response.data.message);
     }
-    // setName("");
-    // setEmail("");
-    // setPassword("");
+    setName("");
+    setEmail("");
+    setPassword("");
   };
+
+  const guest = async (e) => {
+    e.preventDefault();
+    
+
+    try {
+      const { data } = await toast.promise(axios.post("/api/user/signin", {
+        email:"guest@User",
+        password:"GuestUser12k3",
+      }),  {
+        pending: " please wait ",
+        success: "your note updated",
+        error: "try again",
+      })
+      if (data) {
+        const { password, ...userInfo } = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        navigate("/home");
+      }
+    } catch (error) {
+
+      alert(error.response.data.message);
+    }
+    setName("");
+    setEmail("");
+    setPassword("");
+  };
+
 
   if (auth) {
     return (
@@ -162,11 +183,29 @@ const UserAuth = () => {
                           >
                             Sign up
                           </button>{" "}
+                        
                         </div>
                         <hr />
                       </form>
-
+<div className="flex justify-content-center">
+<button
+                          className="btn btn-success btn-block mb-4 mx-2"
+                          onClick={guest}
+                           data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                title="if you use guest account anyone can see your notes"
+                        >
+                          public account (Guest User)
+                        </button>
+</div>
                       <div className="text-center">
+
+
+
+
+
+
+            
                         <p>have you already account ? please Login </p>
                         <button
                           type="button"
@@ -188,6 +227,7 @@ const UserAuth = () => {
   } else {
     return (
       <>
+        <ToastContainer />
         <section className="d-flex justify-content-center align-items-center bg-dark vh-100">
           <div className=" text-center text-lg-start">
             <div className="">
@@ -227,7 +267,8 @@ const UserAuth = () => {
                           className="btn btn-primary btn-block mb-4"
                         >
                           Sign in
-                        </button>{" "}
+                        </button>
+                       
                       </div>
                       <hr />
 
