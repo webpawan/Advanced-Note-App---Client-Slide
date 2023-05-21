@@ -1,31 +1,41 @@
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
-import { getUser } from "../features/userSlice";
 import { useDispatch } from "react-redux";
+import { setSearch } from "../features/noteSlice";
+import { useNavigate } from "react-router-dom";
 const Header = () => {
   const [user, setUser] = useState("");
+  const [searchResult, setSearchResult] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  dispatch(setSearch(searchResult));
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     setUser(userInfo);
     const { email, ...Info } = userInfo;
-    // dispatch(setUser());
     if (!userInfo) {
       navigate("/");
     }
   }, []);
+
+  const logout = () =>{
+    console.log("hy");
+    localStorage.clear();
+    navigate("/");
+
+  }
+
   return (
     <>
       <motion.header
-        className="header"
+        className=""
         initial={{ opacity: 0, y: "-10vw" }}
         animate={{ opacity: 1, y: "0vh" }}
         transition={{ bounce: 0.25, type: "spring" }}
       >
         <nav className="navbar navbar-expand-lg bg-light">
           <div className="container-fluid">
-            <a className="navbar-brand img-fluid" href="/">
+            <a className="navbar-brand img-fluid" href="#">
               <div className="box">{user?.email}</div>
             </a>
             <button
@@ -47,14 +57,15 @@ const Header = () => {
                   className="form-control "
                   type="search"
                   placeholder="Search in small letter "
+                  onChange={(e) => setSearchResult(e.target.value)}
+                  value={searchResult}
                 />
               </div>
             </div>
-            <button className="btn btn-outline-danger">logout</button>
+            <button className="btn btn-outline-danger" onClick={logout}>logout</button>
           </div>
         </nav>
       </motion.header>
-      <ToastContainer />
     </>
   );
 };

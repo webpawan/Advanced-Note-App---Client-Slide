@@ -1,41 +1,74 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
-import { getSelectNote, setSelectNote } from "../features/noteSlice";
-const Note = ({ refresh }) => {
+import { useDispatch, useSelector } from "react-redux";
+import { getSearch, setSelectNote } from "../features/noteSlice";
+import { ToastContainer, toast } from "react-toastify";
+
+const Note = ({effect}) => {
+
   const [notes, setNotes] = useState();
+const [finalShow, setFinalShow] = useState([])
   const dispatch = useDispatch();
-  const deletenote = async (id) => {
+  const search = useSelector(getSearch);
+
+  const noteEdit = async (noteId) => {
+
     try {
-      const deleteNote = await axios.delete(`/api/note/delete/${id}`);
+      const { data } = await toast.promise(axios.get(`/api/note/selectNote/${noteId}`),{
+        pending: "please wait",
+          success: "now you can edit",
+          error: "something is wrong try again or the page ",
+      })
+      dispatch(setSelectNote(data));
+
     } catch (error) {
       console.log(error);
     }
   };
-
-  const noteEdit = async (noteId) => {
-    try {
-      const { data } = await axios.get(`/api/note/selectNote/${noteId}`);
-      dispatch(setSelectNote(data))
-    } catch (error) {
-      console.log(error);
-    }
+  const fetchNote = async () => {
+    const { data } = await axios.get("/api/note/");
+    setNotes(data);
   };
 
   useEffect(() => {
-    const fetchNote = async () => {
-      const { data } = await axios.get("/api/note/");
-      setNotes(data);
-    };
-    fetchNote();
-  }, [refresh, deletenote]);
+    if (notes !== undefined && notes !== null) {
+      const result = notes.filter((item) => {
+        const { title, body } = item;
+        const query = search.toLowerCase();
+        return (
+          title.toLowerCase().includes(query) ||
+          body.toLowerCase().includes(query)
+        );
+      });
+      setFinalShow(result);
+    }
+  }, [search,notes]);
+  const deletenote = async (id) => {
+    try {
+      const deleteNote = await toast.promise(
+        axios.delete(`/api/note/delete/${id}`),
+        {
+          pending: "note is deleting",
+          success: "your note deleted",
+          error: "something is wrong try again or the page ",
+        }
+      );
+      fetchNote();
 
+    } catch (error) {
+      console.log(error);
+    }
+  };
+   useEffect(() => {
+     fetchNote();
+   }, [effect]);
   if (notes) {
+    <ToastContainer />;
     return (
       <div className="container my-5">
         <div className="row">
-          {notes?.map((data) => {
+          {finalShow?.map((data) => {
             return (
               <motion.div
                 className="col-lg-4 col-md-3  col-sm-6 my-4"

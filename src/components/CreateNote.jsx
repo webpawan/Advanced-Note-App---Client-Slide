@@ -2,73 +2,99 @@ import { motion } from "framer-motion";
 import Note from "./Note";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { getSelectNote, setSelectNote } from "../features/noteSlice";
+import { useSelector } from "react-redux";
+import { getSelectNote } from "../features/noteSlice";
+import { ToastContainer, toast } from "react-toastify";
 const CreateNote = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [color, setColor] = useState("");
   const [tag, setTag] = useState("");
   const [selectBtn, setSelectBtn] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+const [effect, setEffect] = useState("")
   const selectNote = useSelector(getSelectNote);
 
+
   const createNote = async () => {
-    setLoading(true);
     try {
       if (!title || !body) {
         setColor("");
         setTag("");
-        return alert("please write title and body");
+        return toast.error("Fill the all fields", {
+          position: "top-center",
+          autoClose: 3000,
+          closeOnClick: true,
+          pauseOnHover: false,
+          progress: undefined,
+          theme: "dark",
+        });
       }
-      const { data } = await axios.post(`/api/note/`, {
-        title,
-        body,
-        color,
-        tag,
-      });
+      const { data } = await toast.promise(
+        axios.post(`/api/note/`, {
+          title,
+          body,
+          color,
+          tag,
+        }),
+        {
+          pending: "note is creating",
+          success: "note created",
+          error: "something is wrong try again or refresh the page ",
+        }
+      );
 
-      dispatch(setSelectNote(data));
-
-      setLoading(false);
     } catch (error) {
-     return setLoading(false);
+      return console.log(error);
     }
+    setTitle("")
+    setBody("")
     setColor("");
     setTag("");
+    setEffect("note create")
   };
   const updateNote = async () => {
     try {
       const noteId = selectNote._id;
-      const noteUpdate = await axios.put("/api/note/update/", {
-        title,
-        body,
-        tag,
-        color,
-        noteId,
-      });
+      const noteUpdate = await toast.promise(
+        axios.put("/api/note/update/", {
+          title,
+          body,
+          tag,
+          color,
+          noteId,
+        }),
+        {
+          pending: "please wait",
+          success: "your note updated",
+          error: "something is wrong try again or refresh the page ",
+        }
+      );
       setSelectBtn(true);
-      
+
     } catch (error) {
-      console.log(error);
-      alert("server error");
+      return console.log(error);
     }
+    setTitle(" ");
+    setBody(" ");
+    setColor(" ");
+    setTag(" ")
+    setEffect("note update");
   };
   useEffect(() => {
-    console.log(selectNote.title);
     if (selectNote.title) {
       setSelectBtn(false);
       setTitle(selectNote.title);
       setBody(selectNote.body);
       setColor(selectNote.color);
       setTag(selectNote.tag);
-      console.log("hy");
     }
-  }, [selectNote.title!==undefined]);
+    console.log("hy");
+  }, [selectNote.title,effect]);
   return (
     <>
-      <section className="input mx-auto w-75 mt-5">
+      <ToastContainer />
+
+      <section className="input mx-auto w-75 mt-5 overflow-hidden">
         <form action="">
           <motion.div
             className="input-group mb-3"
@@ -271,8 +297,9 @@ const CreateNote = () => {
 
           stiffness: 100,
         }}
+        className="card__container"
       >
-        <Note refresh={loading} />
+        <Note  effect={effect}/>
       </motion.div>
     </>
   );

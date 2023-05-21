@@ -2,12 +2,12 @@
   margin: 0;
   padding: 0;
   user-select: none;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 .content {
-  /* background-color: red; */
   height: calc(100vh - 45px);
+
 }
 
 textarea {
@@ -91,4 +91,9 @@ padding:  5px !important;
 input,
 textarea {
   border: 1px solid black !important;
+}
+
+
+.card__container{
+  overflow-x: hidden;
 }
