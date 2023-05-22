@@ -11,9 +11,8 @@ const CreateNote = () => {
   const [color, setColor] = useState("");
   const [tag, setTag] = useState("");
   const [selectBtn, setSelectBtn] = useState(true);
-const [effect, setEffect] = useState("")
+  const [effect, setEffect] = useState(0);
   const selectNote = useSelector(getSelectNote);
-
 
   const createNote = async () => {
     try {
@@ -42,15 +41,16 @@ const [effect, setEffect] = useState("")
           error: "something is wrong try again or refresh the page ",
         }
       );
-
+      setEffect(true);
+      setEffect(effect + 1);
     } catch (error) {
+      setEffect(0);
       return console.log(error);
     }
-    setTitle("")
-    setBody("")
+    setTitle("");
+    setBody("");
     setColor("");
     setTag("");
-    setEffect("note create")
   };
   const updateNote = async () => {
     try {
@@ -70,16 +70,18 @@ const [effect, setEffect] = useState("")
         }
       );
       setSelectBtn(true);
-
+      setEffect(effect + 1);
     } catch (error) {
+      setEffect(0);
+
       return console.log(error);
     }
     setTitle(" ");
     setBody(" ");
     setColor(" ");
-    setTag(" ")
-    setEffect("note update");
+    setTag(" ");
   };
+
   useEffect(() => {
     if (selectNote.title) {
       setSelectBtn(false);
@@ -88,8 +90,7 @@ const [effect, setEffect] = useState("")
       setColor(selectNote.color);
       setTag(selectNote.tag);
     }
-    console.log("hy");
-  }, [selectNote.title,effect]);
+  }, [selectNote]);
   return (
     <>
       <ToastContainer />
@@ -299,7 +300,7 @@ const [effect, setEffect] = useState("")
         }}
         className="card__container"
       >
-        <Note  effect={effect}/>
+        <Note effect={effect} />
       </motion.div>
     </>
   );

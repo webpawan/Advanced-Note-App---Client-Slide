@@ -5,23 +5,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { getSearch, setSelectNote } from "../features/noteSlice";
 import { ToastContainer, toast } from "react-toastify";
 
-const Note = ({effect}) => {
-
+const Note = ({ effect }) => {
   const [notes, setNotes] = useState();
-const [finalShow, setFinalShow] = useState([])
+  const [finalShow, setFinalShow] = useState([]);
   const dispatch = useDispatch();
   const search = useSelector(getSearch);
 
   const noteEdit = async (noteId) => {
-
     try {
-      const { data } = await toast.promise(axios.get(`/api/note/selectNote/${noteId}`),{
-        pending: "please wait",
+      const { data } = await toast.promise(
+        axios.get(`/api/note/selectNote/${noteId}`),
+        {
+          pending: "please wait",
           success: "now you can edit",
           error: "something is wrong try again or the page ",
-      })
+        }
+      );
       dispatch(setSelectNote(data));
-
     } catch (error) {
       console.log(error);
     }
@@ -43,26 +43,26 @@ const [finalShow, setFinalShow] = useState([])
       });
       setFinalShow(result);
     }
-  }, [search,notes]);
+  }, [search, notes]);
   const deletenote = async (id) => {
     try {
       const deleteNote = await toast.promise(
         axios.delete(`/api/note/delete/${id}`),
         {
-          pending: "note is deleting",
+          pending: "please wait note is deleting",
           success: "your note deleted",
-          error: "something is wrong try again or the page ",
+          error: "try again or refresh the page ",
         }
       );
       fetchNote();
-
     } catch (error) {
       console.log(error);
     }
   };
-   useEffect(() => {
-     fetchNote();
-   }, [effect]);
+  useEffect(() => {
+    fetchNote();
+    console.log(effect);
+  }, [effect]);
   if (notes) {
     <ToastContainer />;
     return (

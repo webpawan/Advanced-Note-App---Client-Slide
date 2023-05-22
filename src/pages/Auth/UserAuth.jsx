@@ -83,9 +83,7 @@ const UserAuth = () => {
   };
 
   const guest = async (e) => {
-    e.preventDefault();
     
-
     try {
       const { data } = await toast.promise(axios.post("/api/user/signin", {
         email:"guest@User",
@@ -188,16 +186,15 @@ const UserAuth = () => {
                         <hr />
                       </form>
 <div className="flex justify-content-center">
-<button
-                          className="btn btn-success btn-block mb-4 mx-2"
-                          onClick={guest}
+                         <button
+                           className="btn btn-success btn-block mb-4 mx-2"
+                           onClick={guest}
                            data-bs-toggle="tooltip"
                 data-bs-placement="bottom"
-                title="if you use guest account anyone can see your notes"
-                        >
+                title="if you use guest account anyone can see your notes">
                           public account (Guest User)
                         </button>
-</div>
+                 </div>
                       <div className="text-center">
 
 
